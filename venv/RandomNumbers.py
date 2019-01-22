@@ -53,6 +53,17 @@ class NormalDistribution(Resource):
         lower_end_range = args['lower']
         higher_end_range = args['higher']
         amount = args['amount']
+        maximumInTestNormalBinFile = 1000000
+        range = maximumInTestNormalBinFile/100 #will give something like 10000, so now!
+        with open('testNormal.bin', 'rb') as f:
+            f.seek(lastPosition)
+            for chunk in iter(lambda: f.readline(1024), b''):
+                finalrandomarray = convertHexChunktoBinaryStream(chunk,lower_end_range,higher_end_range,amount)
+                if(len(finalrandomarray)==int(amount)):
+                    global lastPosition
+                    lastPosition=f.tell()
+                    break
+        return finalrandomarray
      	return {'finalrandomarray': readAfile("testNormal.bin",lower_end_range,higher_end_range,amount)}
 class MegaMillion(Resource):
     def get(self):
@@ -121,4 +132,3 @@ api.add_resource(NormalDistribution,'/normalDistribution')
 # Driver code
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port='5050')
-
