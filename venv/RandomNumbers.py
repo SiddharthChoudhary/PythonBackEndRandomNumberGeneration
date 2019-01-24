@@ -58,6 +58,9 @@ class NormalDistribution(Resource):
         #with open('normal1.txt', 'rb') as f:
         FinalRandomArray = []
         f = open('normal1.txt')
+        #to read till end of the file to note the eof, which we can use later
+        lines=f.readlines()
+        eof=f.tell()
         f.seek(lastPositionForNormalDistributionFile)
         for piece in f:
             value = int((float(piece))/divisor)
@@ -68,7 +71,7 @@ class NormalDistribution(Resource):
                     FinalRandomArray.append(value)
                     amount-=1
         global lastPositionForNormalDistributionFile
-        lastPositionForNormalDistributionFile=f.tell()
+        lastPositionForNormalDistributionFile= 0 if eof==f.tell() else f.tell()
         return FinalRandomArray
      	#return {'finalrandomarray': readAfile("testNormal.bin",lower_end_range,higher_end_range,amount)}
 class MegaMillion(Resource):
