@@ -71,6 +71,7 @@ class NormalDistribution(Resource):
                     FinalRandomArray.append(value)
                     amount-=1
         global lastPositionForNormalDistributionFile
+        #change it to 0 if we have reached to the end of the file normal1.txt
         lastPositionForNormalDistributionFile= 0 if eof==f.tell() else f.tell()
         return FinalRandomArray
      	#return {'finalrandomarray': readAfile("testNormal.bin",lower_end_range,higher_end_range,amount)}
