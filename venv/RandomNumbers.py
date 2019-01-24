@@ -6,7 +6,7 @@ app = Flask(__name__)
 api = Api(app)
 lastPosition=0
 lastPositionForMegaMillion=0
-
+lastPositionForNormalDistributionFile=0
 def readAfile(filename,lower_end_range,higher_end_range,amount):
     with open(filename, 'rb') as f:
         f.seek(lastPosition)
@@ -50,21 +50,27 @@ def megamillion():
 class NormalDistribution(Resource):
     def get(self):
         args = request.args
-        lower_end_range = args['lower']
-        higher_end_range = args['higher']
-        amount = args['amount']
+        lower_end_range = int(args['lower'])
+        higher_end_range = int(args['higher'])
+        amount = int(args['amount'])
         maximumInTestNormalBinFile = 1000000
-        range = maximumInTestNormalBinFile/100 #will give something like 10000, so now!
-        with open('testNormal.bin', 'rb') as f:
-            f.seek(lastPosition)
-            for chunk in iter(lambda: f.readline(1024), b''):
-                finalrandomarray = convertHexChunktoBinaryStream(chunk,lower_end_range,higher_end_range,amount)
-                if(len(finalrandomarray)==int(amount)):
-                    global lastPosition
-                    lastPosition=f.tell()
+        divisor = maximumInTestNormalBinFile/100 #will give something like 10000, so now!
+        #with open('normal1.txt', 'rb') as f:
+        FinalRandomArray = []
+        f = open('normal1.txt')
+        f.seek(lastPositionForNormalDistributionFile)
+        for piece in f:
+            value = int((float(piece))/divisor)
+            if(value>=lower_end_range and value<=higher_end_range):
+                if(amount==0):
                     break
-        return finalrandomarray
-     	return {'finalrandomarray': readAfile("testNormal.bin",lower_end_range,higher_end_range,amount)}
+                if(amount!=0 and amount>0):
+                    FinalRandomArray.append(value)
+                    amount-=1
+        global lastPositionForNormalDistributionFile
+        lastPositionForNormalDistributionFile=f.tell()
+        return FinalRandomArray
+     	#return {'finalrandomarray': readAfile("testNormal.bin",lower_end_range,higher_end_range,amount)}
 class MegaMillion(Resource):
     def get(self):
         return megamillion()
