@@ -53,27 +53,27 @@ class NormalDistribution(Resource):
         lower_end_range = int(args['lower'])
         higher_end_range = int(args['higher'])
         amount = int(args['amount'])
-        maximumInTestNormalBinFile = 1000000
-        divisor = maximumInTestNormalBinFile/100 #will give something like 10000, so now!
-        #with open('normal1.txt', 'rb') as f:
-        FinalRandomArray = []
-        f = open('normal1.txt')
+        #maximumInTestNormalBinFile = 1000000
+        #divisor = maximumInTestNormalBinFile/100 #will give something like 10000, so now!
+        	#with open('normal1.txt', 'rb') as f:
+        #FinalRandomArray = []
+        #f = open('normal1.txt')
         #to read till end of the file to note the eof, which we can use later
-        lines=f.readlines()
-        eof=f.tell()
-        f.seek(lastPositionForNormalDistributionFile)
-        for piece in f:
-            value = int((float(piece))/divisor)
-            if(value>=lower_end_range and value<=higher_end_range):
-                if(amount==0):
-                    break
-                if(amount!=0 and amount>0):
-                    FinalRandomArray.append(value)
-                    amount-=1
-        global lastPositionForNormalDistributionFile
+        #lines=f.readlines()
+        #eof=f.tell()
+        #f.seek(lastPositionForNormalDistributionFile)
+        #for piece in f:
+          #  value = int((float(piece))/divisor)
+           # if(value>=lower_end_range and value<=higher_end_range):
+            #    if(amount==0):
+            #        break
+             #   if(amount!=0 and amount>0):
+              #      FinalRandomArray.append(value)
+               #     amount-=1
+        #global lastPositionForNormalDistributionFile
         #change it to 0 if we have reached to the end of the file normal1.txt
-        lastPositionForNormalDistributionFile= 0 if eof==f.tell() else f.tell()
-        return FinalRandomArray
+        #lastPositionForNormalDistributionFile= 0 if eof==f.tell() else f.tell()
+        return {'finalrandomarray':readAfile("testUniform.bin",lower_end_range,higher_end_range,amount)}
      	#return {'finalrandomarray': readAfile("testNormal.bin",lower_end_range,higher_end_range,amount)}
 class MegaMillion(Resource):
     def get(self):

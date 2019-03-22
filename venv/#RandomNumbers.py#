@@ -120,5 +120,4 @@ api.add_resource(MegaMillion,'/megaMillion')
 api.add_resource(NormalDistribution,'/normalDistribution')
 # Driver code
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port='5050')
-
+    app.run(host='0.0.0.0',port='3490')
