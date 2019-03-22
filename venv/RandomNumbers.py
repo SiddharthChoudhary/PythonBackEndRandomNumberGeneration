@@ -22,12 +22,13 @@ def megamillion():
     lower_end_range = 1
     higher_end_range = 70
     amount = 5
+    finalrandomarray = set()
     with open("testUniform.bin", 'rb') as f:
         f.seek(lastPositionForMegaMillion)
         for chunk in iter(lambda: f.read(100), b''):
             if(chunk==''):
                 return {'finalrandomarray':['file length reached']}
-            finalrandomarray = convertHexChunktoBinaryStream(chunk,lower_end_range,higher_end_range,amount)
+            finalrandomarray = convertHexChunktoBinaryStreamForMegaMillion(chunk,lower_end_range,higher_end_range,amount,finalrandomarray)
             if(len(finalrandomarray)==5):
                 global lastPositionForMegaMillion
                 lastPositionForMegaMillion=f.tell()
@@ -40,12 +41,12 @@ def megamillion():
         for chunk in iter(lambda: f.read(100), b''):
             if(chunk==''):
                 return {'finalrandomarray':['file length reached']}
-            finalrandomarrayForLastnumber = convertHexChunktoBinaryStream(chunk,lower_end_range,higher_end_range,amount)
-            if(len(finalrandomarrayForLastnumber)==1):
+            finalrandomarray = convertHexChunktoBinaryStreamForMegaMillion(chunk,lower_end_range,higher_end_range,amount,finalrandomarray)
+            if(len(finalrandomarray)==6):
                 global lastPositionForMegaMillion
                 lastPositionForMegaMillion=f.tell()
                 break
-    return {'finalrandomarray':finalrandomarray+finalrandomarrayForLastnumber}
+    return {'finalrandomarray':list(finalrandomarray)}
 
 class NormalDistribution(Resource):
     def get(self):
@@ -92,6 +93,54 @@ def convertHexChunktoBinaryStream(inputarray,lower_end_range,higher_end_range,am
     for key, value in d.items():
            finalrandomarray=value
     return finalrandomarray
+#a function to convertHexaDecimal to Binarystream for MegaMillion Functionality
+def convertHexChunktoBinaryStreamForMegaMillion(inputarray,lower_end_range,higher_end_range,amount,initialSet):
+    binaryarray =  []
+    for i in range(0,len(inputarray)):
+        binaryarray.append(bin(struct.unpack('1B',inputarray[i])[0])[2:])
+    binaryarray=''.join(binaryarray)
+    d= startRandomizerForMegaMillionFunctionality(binaryarray,lower_end_range,higher_end_range,amount,initialSet)
+    for key, value in d.items():
+           finalrandomarray=value
+    return finalrandomarray
+#a function to generate and traverse over the chunk and look for the input stream that if any input, (for example- 1001) 
+# can be converted into a number desired in the range or not, AND if it does than throw that SET (In case of megamillion)
+def startRandomizerForMegaMillionFunctionality(inputarray,lower_end_range,higher_end_range,amount,initialSet):
+        lower_end_range =int(lower_end_range)
+        higher_end_range=int(higher_end_range)
+        amount          =int(amount)
+        #range_input is the range
+        range_input=higher_end_range-lower_end_range+1
+        #taking the log of the range  to generate offset
+        log_of_range=log(range_input,2)
+        log_of_range=int(ceil(log_of_range))
+        higher_end_range_represented_by_bits     =   0
+        lower_end_range_represented_by_bits      =   0
+        lst                                      =   []
+        #creating the maximum of numbers which  it can go to by saving,for ex: 2^3+2^2+2^1+2^0
+	for i in range(0,(log_of_range)):
+                higher_end_range_represented_by_bits+=pow(2,i)
+        while True:
+            i=range_input%2
+            range_input=range_input/2
+            lst.append(i)
+            if range_input==0:
+                break
+        length    =   len(lst)
+        #where length is equal to the window size, Inputarray - length makes it go till the end but also setting the offset else you will get an IndexoutofBound error
+        for file in range(0,len(inputarray)-length,length):
+            digit =[]
+            for i in range(0,length):
+                digit.append(inputarray[file+i])
+            digit=''.join(digit)
+            number=binaryToDecimal(digit)+lower_end_range
+            if(number>=lower_end_range and number<=higher_end_range):
+                    if(amount!=0 and amount>0):
+                        if number not in initialSet:
+                            initialSet.add(number)
+                            amount-=1
+        return {'finalrandomarray':initialSet}
+
 #a function to convertHexaDecimal to startRandomizer
 def startRandomizer(inputarray,lower_end_range,higher_end_range,amount):
         lower_end_range =int(lower_end_range)
