@@ -33,6 +33,8 @@ def megamillion():
                 global lastPositionForMegaMillion
                 lastPositionForMegaMillion=f.tell()
                 break
+    FiveNumberlist = list(finalrandomarray)
+    finalrandomarray = set()
     lower_end_range=1
     higher_end_range=25
     amount=1
@@ -42,11 +44,12 @@ def megamillion():
             if(chunk==''):
                 return {'finalrandomarray':['file length reached']}
             finalrandomarray = convertHexChunktoBinaryStreamForMegaMillion(chunk,lower_end_range,higher_end_range,amount,finalrandomarray)
-            if(len(finalrandomarray)==6):
+            if(len(finalrandomarray)==1):
                 global lastPositionForMegaMillion
                 lastPositionForMegaMillion=f.tell()
                 break
-    return {'finalrandomarray':list(finalrandomarray)}
+    LastNumberList = list(finalrandomarray)
+    return {'finalrandomarray':FiveNumberlist+LastNumberList}
 
 class NormalDistribution(Resource):
     def get(self):
@@ -110,6 +113,7 @@ def startRandomizerForMegaMillionFunctionality(inputarray,lower_end_range,higher
         higher_end_range=int(higher_end_range)
         amount          =int(amount)
         #range_input is the range
+        print "Lower range is ", lower_end_range," higher range is ", higher_end_range," amount is ", amount
         range_input=higher_end_range-lower_end_range+1
         #taking the log of the range  to generate offset
         log_of_range=log(range_input,2)
@@ -127,6 +131,7 @@ def startRandomizerForMegaMillionFunctionality(inputarray,lower_end_range,higher
             if range_input==0:
                 break
         length    =   len(lst)
+        print "Initial set is",initialSet
         #where length is equal to the window size, Inputarray - length makes it go till the end but also setting the offset else you will get an IndexoutofBound error
         for file in range(0,len(inputarray)-length,length):
             digit =[]
@@ -139,6 +144,9 @@ def startRandomizerForMegaMillionFunctionality(inputarray,lower_end_range,higher
                         if number not in initialSet:
                             initialSet.add(number)
                             amount-=1
+                    elif amount < 0:
+                        break
+        print("Initial set after is", initialSet)
         return {'finalrandomarray':initialSet}
 
 #a function to convertHexaDecimal to startRandomizer
@@ -176,6 +184,8 @@ def startRandomizer(inputarray,lower_end_range,higher_end_range,amount):
                     if(amount!=0 and amount>0):
                         FinalRandomArray.append(number)
                         amount-=1
+                    elif amount < 0:
+                        break
         return {'finalrandomarray':FinalRandomArray}
 class ReturnMainModule(Resource):
     def get(self):
